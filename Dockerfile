@@ -14,6 +14,5 @@ COPY ./odoo.conf /etc/odoo/odoo.conf
 COPY ./addons /mnt/extra-addons
 
 # Render asigna el puerto a través de $PORT, así que se lo pasamos a Odoo
-# Usamos sed para reemplazar las variables de entorno en el archivo de configuración
-# y luego ejecutamos Odoo con la configuración procesada
-CMD ["bash", "-c", "sed -i 's/\${DB_HOST}/'$DB_HOST'/g; s/\${DB_PORT}/'$DB_PORT'/g; s/\${DB_USER}/'$DB_USER'/g; s/\${DB_PASSWORD}/'$DB_PASSWORD'/g; s/\${DB_NAME}/'$DB_NAME'/g' /etc/odoo/odoo.conf && odoo -c /etc/odoo/odoo.conf --xmlrpc-port ${PORT}"]
+# Usamos un script simple para reemplazar las variables de entorno
+CMD sed -i "s/\${DB_HOST}/$DB_HOST/g; s/\${DB_PORT}/$DB_PORT/g; s/\${DB_USER}/$DB_USER/g; s/\${DB_PASSWORD}/$DB_PASSWORD/g; s/\${DB_NAME}/$DB_NAME/g" /etc/odoo/odoo.conf && odoo -c /etc/odoo/odoo.conf --xmlrpc-port ${PORT}
