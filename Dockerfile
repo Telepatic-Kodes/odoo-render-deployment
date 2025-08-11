@@ -14,5 +14,6 @@ COPY ./odoo.conf /etc/odoo/odoo.conf
 COPY ./addons /mnt/extra-addons
 
 # Render asigna el puerto a través de $PORT, así que se lo pasamos a Odoo
-# Usamos el comando oficial de Odoo con nuestra configuración personalizada
-CMD ["bash", "-c", "odoo -c /etc/odoo/odoo.conf --xmlrpc-port ${PORT}"]
+# Usamos envsubst para expandir las variables de entorno en el archivo de configuración
+# y luego ejecutamos Odoo con la configuración procesada
+CMD ["bash", "-c", "envsubst < /etc/odoo/odoo.conf > /tmp/odoo.conf && odoo -c /tmp/odoo.conf --xmlrpc-port ${PORT}"]
