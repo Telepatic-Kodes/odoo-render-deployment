@@ -13,11 +13,5 @@ COPY ./odoo.conf /etc/odoo/odoo.conf
 # Estos son módulos que puedes desarrollar o instalar aparte de los oficiales
 COPY ./addons /mnt/extra-addons
 
-# Copiamos el script de entrada
-COPY ./entrypoint.sh /entrypoint.sh
-
-# Hacer el script ejecutable
-RUN chmod +x /entrypoint.sh
-
-# Usar el script de entrada
-ENTRYPOINT ["/entrypoint.sh"]
+# Usar un comando simple que funcione directamente
+CMD odoo -c /etc/odoo/odoo.conf --xmlrpc-port ${PORT:-8069}
