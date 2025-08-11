@@ -13,15 +13,6 @@ COPY ./odoo.conf /etc/odoo/odoo.conf
 # Estos son módulos que puedes desarrollar o instalar aparte de los oficiales
 COPY ./addons /mnt/extra-addons
 
-# Establecemos los permisos correctos para que Odoo pueda acceder a los archivos
-# 'odoo:odoo' es el usuario y grupo que usa la imagen oficial
-RUN chown -R odoo:odoo /mnt/extra-addons /etc/odoo
-
-# Cambiamos al usuario odoo por seguridad
-# Es una buena práctica no ejecutar aplicaciones como root
-USER odoo
-
-# Comando que se ejecuta cuando el contenedor inicia
-# Render asigna automáticamente una variable de entorno $PORT
-# La pasamos a Odoo para que use ese puerto específico
+# Render asigna el puerto a través de $PORT, así que se lo pasamos a Odoo
+# Usamos el comando oficial de Odoo con nuestra configuración personalizada
 CMD ["bash", "-c", "odoo -c /etc/odoo/odoo.conf --xmlrpc-port ${PORT}"]
