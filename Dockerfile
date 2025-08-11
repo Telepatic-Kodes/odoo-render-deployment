@@ -13,5 +13,5 @@ COPY ./odoo.conf /etc/odoo/odoo.conf
 # Estos son módulos que puedes desarrollar o instalar aparte de los oficiales
 COPY ./addons /mnt/extra-addons
 
-# Usar un comando simple que funcione directamente
-CMD odoo -c /etc/odoo/odoo.conf --xmlrpc-port ${PORT:-8069}
+# Usar un comando que maneje las variables de entorno correctamente
+CMD odoo -c /etc/odoo/odoo.conf --xmlrpc-port ${PORT:-8069} --db_host=${DB_HOST} --db_port=${DB_PORT} --db_user=${DB_USER} --db_password=${DB_PASSWORD} --db_name=${DB_NAME} --without-demo=all
