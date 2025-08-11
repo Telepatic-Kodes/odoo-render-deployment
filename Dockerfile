@@ -13,11 +13,5 @@ COPY ./odoo.conf /etc/odoo/odoo.conf
 # Estos son módulos que puedes desarrollar o instalar aparte de los oficiales
 COPY ./addons /mnt/extra-addons
 
-# Copiamos el script de inicio
-COPY ./start.sh /start.sh
-
-# Hacer el script ejecutable
-RUN chmod +x /start.sh
-
-# Usar el script de inicio como comando por defecto
-CMD ["/start.sh"]
+# Usar un comando simple que funcione directamente
+CMD sed -i "s/\${DB_HOST}/$DB_HOST/g; s/\${DB_PORT}/$DB_PORT/g; s/\${DB_USER}/$DB_USER/g; s/\${DB_PASSWORD}/$DB_PASSWORD/g; s/\${DB_NAME}/$DB_NAME/g" /etc/odoo/odoo.conf && exec odoo -c /etc/odoo/odoo.conf --xmlrpc-port ${PORT:-8069}
