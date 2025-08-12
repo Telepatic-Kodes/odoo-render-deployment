@@ -1,134 +1,115 @@
-# 🚀 Odoo en Render - Guía de Instalación
+# Odoo en Render
 
-Este repositorio contiene la configuración necesaria para desplegar **Odoo 18.0** en **Render** usando Docker.
+Este proyecto contiene la configuración necesaria para desplegar Odoo 16.0 en la plataforma Render.
 
-## 📋 Prerrequisitos
+## ¿Qué es Odoo?
 
-- Una cuenta en [GitHub](https://github.com)
-- Una cuenta en [Render](https://render.com)
-- Una base de datos PostgreSQL (puede ser en Render o externa)
+Odoo es un sistema de gestión empresarial (ERP) de código abierto que incluye módulos para:
+- Gestión de clientes (CRM)
+- Contabilidad
+- Inventario
+- Recursos humanos
+- Y muchos más
 
-## 🏗️ Estructura del Proyecto
+## Archivos del Proyecto
 
-```
-odoo-render/
-├── Dockerfile          # Configuración de Docker
-├── odoo.conf          # Configuración de Odoo
-├── addons/            # Módulos personalizados
-│   └── .gitkeep      # Mantiene la carpeta en Git
-└── README.md         # Este archivo
-```
+### `requirements.txt`
+Contiene todas las dependencias de Python necesarias para Odoo.
 
-## 🚀 Pasos para el Despliegue
+### `odoo.conf`
+Archivo de configuración de Odoo con configuraciones optimizadas para Render.
 
-### 1. Crear Repositorio en GitHub
+### `start.py`
+Script de inicio que Render ejecutará para iniciar Odoo.
 
-1. Crea un nuevo repositorio en GitHub (ej: `odoo-render`)
-2. Sube estos archivos a tu repositorio:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit: Odoo configuration for Render"
-   git branch -M main
-   git remote add origin https://github.com/TU_USUARIO/odoo-render.git
-   git push -u origin main
-   ```
+### `render.yaml`
+Archivo de configuración de Render que define los servicios y la base de datos.
 
-### 2. Crear Base de Datos PostgreSQL
+## Pasos para Desplegar en Render
 
-En Render, crea un nuevo **PostgreSQL**:
-- **Name**: `odoo-database`
-- **Database**: `odoo`
-- **User**: `odoo_user`
-- **Region**: Elige la más cercana a ti
+### Paso 1: Crear cuenta en Render
+1. Ve a [render.com](https://render.com)
+2. Crea una cuenta gratuita
+3. Verifica tu email
 
-### 3. Crear Servicio Web en Render
+### Paso 2: Conectar tu repositorio
+1. En Render, haz clic en "New +"
+2. Selecciona "Blueprint"
+3. Conecta tu repositorio de GitHub/GitLab
+4. Selecciona este repositorio
 
-1. Ve a [Render Dashboard](https://dashboard.render.com)
-2. Haz clic en **"New +"** → **"Web Service"**
-3. Conecta tu repositorio de GitHub
-4. Configura el servicio:
+### Paso 3: Configurar el despliegue
+1. Render detectará automáticamente el archivo `render.yaml`
+2. Revisa la configuración:
+   - **Plan**: Starter (gratuito)
+   - **Python Version**: 3.9.16
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `python start.py`
 
-#### Configuración Básica:
-- **Name**: `odoo-app`
-- **Runtime**: `Docker`
-- **Region**: La misma que tu base de datos
+### Paso 4: Variables de entorno
+Render configurará automáticamente:
+- `DATABASE_URL`: URL de la base de datos PostgreSQL
+- `PORT`: Puerto del servidor web
+- `ADMIN_PASSWORD`: Contraseña del administrador
 
-#### Variables de Entorno:
-```
-PORT=8069
-DB_HOST=tu-host-postgres.render.com
-DB_PORT=5432
-DB_USER=odoo_user
-DB_PASSWORD=tu-contraseña-postgres
-DB_NAME=odoo
-```
+### Paso 5: Desplegar
+1. Haz clic en "Create Blueprint"
+2. Render creará automáticamente:
+   - Un servicio web para Odoo
+   - Una base de datos PostgreSQL
+   - Las variables de entorno necesarias
 
-#### Disco Persistente:
-- **Path**: `/var/lib/odoo`
-- **Size**: `1 GB` (mínimo)
+## Acceso a Odoo
 
-### 4. Desplegar
+Una vez desplegado:
+1. Ve a tu dashboard de Render
+2. Haz clic en el servicio "odoo-app"
+3. Copia la URL del servicio
+4. Accede a la URL en tu navegador
 
-1. Haz clic en **"Create Web Service"**
-2. Render comenzará a construir y desplegar tu aplicación
-3. El proceso puede tomar 5-10 minutos
+## Configuración inicial
 
-### 5. Configurar Odoo
+Al acceder por primera vez:
+1. Odoo te pedirá crear una base de datos
+2. Usa los datos de la base de datos de Render
+3. Crea tu cuenta de administrador
+4. Selecciona los módulos que necesites
 
-1. Una vez desplegado, ve a la URL pública de tu servicio
-2. Sigue el asistente de configuración de Odoo
-3. Crea tu primera base de datos y usuario administrador
+## Variables de Entorno Importantes
 
-## ⚙️ Configuración Avanzada
+- `DATABASE_URL`: URL completa de la base de datos PostgreSQL
+- `PORT`: Puerto donde se ejecutará Odoo (configurado por Render)
+- `ADMIN_PASSWORD`: Contraseña del administrador de Odoo
 
-### Variables de Entorno Adicionales
+## Solución de Problemas
 
-Puedes agregar estas variables para personalizar más Odoo:
+### Error de conexión a la base de datos
+- Verifica que la base de datos esté creada en Render
+- Revisa las variables de entorno en el dashboard de Render
 
-```
-# Configuración de email
-SMTP_SERVER=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=tu-email@gmail.com
-SMTP_PASSWORD=tu-contraseña-app
+### Error de dependencias
+- Verifica que todas las dependencias estén en `requirements.txt`
+- Revisa los logs de build en Render
 
-# Configuración de seguridad
-ADMIN_PASSWORD=contraseña-super-segura
-```
+### Error de puerto
+- Render configura automáticamente el puerto
+- No modifiques la variable `PORT` manualmente
 
-### Módulos Personalizados
+## Costos
 
-Para agregar módulos personalizados:
+- **Plan Starter**: Gratuito (con limitaciones)
+- **Base de datos**: Gratuita (hasta 1GB)
+- **Tráfico**: Gratuito (hasta 750 horas/mes)
 
-1. Coloca tus módulos en la carpeta `addons/`
-2. Haz commit y push a GitHub
-3. Render automáticamente redeployará tu aplicación
+## Recursos Adicionales
 
-## 🔧 Solución de Problemas
-
-### Error de Conexión a Base de Datos
-- Verifica que las variables de entorno `DB_*` estén correctas
-- Asegúrate de que la base de datos esté en la misma región
-
-### Error de Puerto
-- Render asigna automáticamente el puerto a través de `$PORT`
-- No cambies la variable `PORT` en las variables de entorno
-
-### Problemas de Permisos
-- Los archivos ya tienen los permisos correctos en el Dockerfile
-- Si persisten problemas, verifica los logs en Render
-
-## 📚 Recursos Adicionales
-
-- [Documentación oficial de Odoo](https://www.odoo.com/documentation/18.0/)
+- [Documentación de Odoo](https://www.odoo.com/documentation)
 - [Documentación de Render](https://render.com/docs)
-- [Docker Hub - Odoo](https://hub.docker.com/_/odoo)
+- [Guía de Python en Render](https://render.com/docs/deploy-python)
 
-## 🤝 Contribuciones
+## Soporte
 
-Si encuentras algún problema o tienes sugerencias, no dudes en crear un issue en este repositorio.
-
----
-
-**¡Listo! Tu Odoo estará funcionando en Render en unos minutos.** 🎉
+Si tienes problemas:
+1. Revisa los logs en el dashboard de Render
+2. Consulta la documentación oficial
+3. Busca en los foros de la comunidad
